@@ -1,23 +1,26 @@
-// import {observable} from "mobx-react"
-
-import {observable, computed} from "mobx";
+import {observable, computed, action, decorate} from "mobx";
 
 class TodoService {
-    @observable _todo = [{title: 'my-todo'}];
-
-    get todo() {
-        return observable(this._todo)
-    }
+    _todo = [{title: 'my-todo'}];
 
     addTodo(title) {
         this._todo.push({title});
-        console.log('todo', this._todo);
-
     }
 
-    // @computed getTodoLength() {
-    //     return this.todo.length;
-    // }
+    get todo(){
+        return this._todo
+    }
+
+    get todoLength() {
+        return this._todo.length;
+    }
 }
+
+decorate(TodoService, {
+    _todo: observable,
+    todo: computed,
+    addTodo: action,
+    todoLength: computed,
+});
 
 export default TodoService;

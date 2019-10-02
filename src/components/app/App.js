@@ -1,19 +1,36 @@
-import React from 'react';
-import './App.css';
-import Todo from "../todo/Todo";
+import './App.scss';
+import React, {Component} from 'react';
+import {observer, inject} from 'mobx-react';
+import TodoList from "../todo-list/TodoList";
+import Form from "../form/Form";
 
-function App() {
-    return (
-        <div className="App">
-            <header className="App-header">
-                <p>
-                    Edit <code>src/App.js</code> and save to reload.r4ewrte4
-                </p>
-            </header>
-            <Todo />
+class App extends Component {
+    render() {
+        const {store} = this.props;
 
-        </div>
-    );
+        console.log('store', store.todoMap)
+
+        return (
+            <div className="App">
+                <header className="App-header">
+                    <p>
+                        header
+                    </p>
+                </header>
+                <div>
+                    <h3 className="subtitle">Make a new To do</h3>
+                    <Form store={store}/>
+                </div>
+                <div className="card-container">
+                    {store.values.map((todo, i) =>
+                        <TodoList todo={todo} key={i}/>
+                    )}
+                </div>
+            </div>
+        );
+    }
 }
 
-export default App;
+export default inject('store')(observer(App));
+
+
