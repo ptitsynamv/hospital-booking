@@ -1,16 +1,23 @@
-import {types} from 'mobx-state-tree';
+import {types} from "mobx-state-tree";
 
-const Todo = types.model('Todo', {
-    name: types.string,
-    details: types.string,
-    is_done: false,
-}).actions(self => ({
-    markDone() {
-        self.is_done = true;
-    }
-})).views(self => ({
-    status() {
-        return self.is_done ? "Done" : "Not Done"
-    }
-}));
+const Todo = types
+    .model({
+        name: types.optional(types.string, ""),
+        details: types.optional(types.string, 'details'),
+        isDone: types.optional(types.boolean, false)
+    })
+    .actions(self => ({
+        setName(newName) {
+            self.name = newName
+        },
+        toggle() {
+            self.isDone = !self.isDone
+        },
+    }))
+    .views(self => ({
+        get status() {
+            return self.isDone ? 'done' : 'not done'
+        }
+    }));
+
 export default Todo;

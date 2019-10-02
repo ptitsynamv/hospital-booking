@@ -6,7 +6,7 @@ export default class Form extends React.Component  {
             <form
                 onSubmit={e =>{
                     e.preventDefault();
-                    this.props.store.add({
+                    this.props.store.addTodo({
                         name: this.nameInput.value,
                         details: this.detailsInput.value,
                     });

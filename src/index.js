@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.scss';
-import App from './components/app/App';
+import App from './modules/layout/components/app/App';
 import * as serviceWorker from './serviceWorker';
 import {Provider} from 'mobx-react';
 import RootStore from './models/store';
@@ -11,11 +11,9 @@ import {onPatch} from 'mobx-state-tree';
 import makeInspectable from 'mobx-devtools-mst';
 
 const store = RootStore.create({
-    todos: {
-        "1": {
-            name: "Eat a cake",
-        }
-    }
+    todos: [
+        {name: "Eat a cake"},
+    ]
 });
 
 onPatch(store, patch => {
