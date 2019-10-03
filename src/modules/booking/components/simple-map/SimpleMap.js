@@ -27,6 +27,10 @@ class SimpleMap extends React.Component {
         };
     }
 
+    componentDidMount() {
+        this.state.hospitalService.fetch();
+    }
+
     handleHospitalClick = (event, hospital) => {
         event.stopPropagation();
         this.state.doctorService.setHospitalFilter(hospital.id);
@@ -73,62 +77,66 @@ class SimpleMap extends React.Component {
 
     render() {
         const {hospitalService, doctorService, anchorEl, activeStep, steps, bookingService} = this.state;
-        const open = Boolean(anchorEl);
+        const isOpen = Boolean(anchorEl);
         const classes = this.useStyles();
 
         return (
-            <section>
-                <svg>
-                    {hospitalService.hospitals.map((hospital, i) =>
-                        <g key={i}>
-                            <circle
-                                cx={hospital.cx}
-                                cy={hospital.cy}
-                                r="50" strokeWidth="1"
-                                onClick={e => this.handleHospitalClick(e, hospital)}/>
-                            <text
-                                x={hospital.textCx}
-                                y={hospital.textCy}
-                                className="name">
-                                {hospital.name}
-                            </text>
-                        </g>
-                    )}
-                </svg>
-                <Popover
-                    id='simple-popover'
-                    open={open}
-                    anchorEl={anchorEl}
-                    onClose={this.handleClose}
-                    anchorOrigin={{
-                        vertical: 'bottom',
-                        horizontal: 'center',
-                    }}
-                    transformOrigin={{
-                        vertical: 'top',
-                        horizontal: 'center',
-                    }}
-                >
-                    <div className="doctors-wrap">
-                        {doctorService.filterDoctors.map((doctor, i) =>
-                            <Button key={i} color="primary" onClick={e => this.handleDoctorClick(e, doctor)}>
-                                {doctor.name}
-                            </Button>
+            <div>
+                {!hospitalService.isLoading &&
+                <section>
+                    <svg>
+                        {hospitalService.hospitals.map((hospital, i) =>
+                            <g key={i}>
+                                <circle
+                                    cx={hospital.cx}
+                                    cy={hospital.cy}
+                                    r="50" strokeWidth="1"
+                                    onClick={e => this.handleHospitalClick(e, hospital)}/>
+                                <text
+                                    x={hospital.textCx}
+                                    y={hospital.textCy}
+                                    className="name">
+                                    {hospital.name}
+                                </text>
+                            </g>
                         )}
-                    </div>
-                </Popover>
-                <CustomStep
-                    activeStep={activeStep}
-                    steps={steps}
-                    handleBack={this.handleBack}
-                />
-                <BookingForm
-                    classes={classes}
-                    activeStep={activeStep}
-                    currentItem={bookingService.currentItem}
-                    onSaveForm={this.onSave}
-                />
-            </section>
+                    </svg>
+                    <Popover
+                        id='simple-popover'
+                        open={isOpen}
+                        anchorEl={anchorEl}
+                        onClose={this.handleClose}
+                        anchorOrigin={{
+                            vertical: 'bottom',
+                            horizontal: 'center',
+                        }}
+                        transformOrigin={{
+                            vertical: 'top',
+                            horizontal: 'center',
+                        }}
+                    >
+                        <div className="doctors-wrap">
+                            {doctorService.filterDoctors.map((doctor, i) =>
+                                <Button key={i} color="primary" onClick={e => this.handleDoctorClick(e, doctor)}>
+                                    {doctor.name}
+                                </Button>
+                            )}
+                        </div>
+                    </Popover>
+                    <CustomStep
+                        activeStep={activeStep}
+                        steps={steps}
+                        handleBack={this.handleBack}
+                    />
+                    <BookingForm
+                        classes={classes}
+                        activeStep={activeStep}
+                        currentItem={bookingService.currentItem}
+                        onSaveForm={this.onSave}
+                    />
+                    <h1>Response: {bookingService.response}</h1>
+                </section>}
+            </div>
         )
     }
 }

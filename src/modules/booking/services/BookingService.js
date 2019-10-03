@@ -1,4 +1,12 @@
-import {action, computed, decorate, observable} from "mobx";
+import {action, computed, decorate, observable, runInAction} from "mobx";
+import {types} from "mobx-state-tree";
+
+export const BookingModel = types
+    .model({
+        doctor: types.string,
+        hospital: types.string,
+        date: types.string,
+    });
 
 class BookingService {
     _item = [
@@ -8,12 +16,12 @@ class BookingService {
             date: 'mock-date',
         },
     ];
-
     _currentItem = {
         doctor: null,
         hospital: null,
         date: new Date().toJSON().slice(0, 10),
     };
+    response = 'init';
 
     get items() {
         return this._item
@@ -35,19 +43,29 @@ class BookingService {
         };
     }
 
-    addCurrentItem() {
+    async addCurrentItem() {
         this._item.push(this.currentItem);
         this._currentItem = {
             doctor: null,
             hospital: null,
             date: new Date().toJSON().slice(0, 10),
-        }
+        };
+
+        const response = await new Promise((res, rej) => {
+            setTimeout(() => {
+                res('Success')
+            }, 1000)
+        });
+        runInAction(() => {
+            this.response = response;
+        })
     }
 }
 
 decorate(BookingService, {
     _item: observable,
     _currentItem: observable,
+    response: observable,
     items: computed,
     currentItem: computed,
     addItem: action,

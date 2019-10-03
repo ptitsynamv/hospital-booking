@@ -1,10 +1,12 @@
 import {types} from 'mobx-state-tree';
 import Todo from "./Todo";
 import {observable} from "mobx";
+import {BookingModel} from "../modules/booking/services/BookingService";
 
 const RootStore = types
     .model({
         todos: types.array(Todo),
+        booking: types.map(BookingModel),
     })
     .actions(self => ({
         addTodo({name, details}) {

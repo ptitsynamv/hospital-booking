@@ -1,7 +1,7 @@
 import {action, computed, decorate, observable} from "mobx";
 
 class DoctorService {
-    _doctor = [
+    _doctors = [
         {
             name: 'doctor',
             id: 'doctor-id',
@@ -26,15 +26,15 @@ class DoctorService {
     _hospitalFilter;
 
     get doctors() {
-        return this._doctor
+        return this._doctors
     }
 
     get filterDoctors() {
-        return this._doctor.filter(d => d.hospitalId === this._hospitalFilter);
+        return this._doctors.filter(d => d.hospitalId === this._hospitalFilter);
     }
 
     addDoctor({name, id, hospitalId}) {
-        this._doctor.push({name, id, hospitalId});
+        this._doctors.push({name, id, hospitalId});
     }
 
     setHospitalFilter(hospitalId) {
