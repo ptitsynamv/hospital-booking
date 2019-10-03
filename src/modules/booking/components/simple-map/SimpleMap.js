@@ -5,43 +5,10 @@ import HospitalService from "../../services/HospitalService";
 import DoctorService from "../../services/DoctorService";
 import {observer} from "mobx-react";
 import Button from "@material-ui/core/Button/Button";
-import Stepper from "@material-ui/core/Stepper/Stepper";
-import Step from "@material-ui/core/Step/Step";
-import StepLabel from "@material-ui/core/StepLabel/StepLabel";
-import Typography from "@material-ui/core/Typography/Typography";
 import BookingService from "../../services/BookingService";
-import TextField from "@material-ui/core/TextField/TextField";
 import makeStyles from "@material-ui/core/styles/makeStyles";
-import withStyles from "@material-ui/core/styles/withStyles";
-
-const CssTextField = withStyles({
-    root: {
-        '& label.Mui-focused': {
-            color: '#3f51b5',
-        },
-        '& .MuiInput-underline:after': {
-            borderBottomColor: '#3f51b5',
-        },
-        '& .MuiInput-underline': {
-            backgroundColor: 'white',
-        },
-        '& .MuiOutlinedInput-root': {
-            '& fieldset': {
-                borderColor: '#3f51b5',
-            },
-            '&:hover fieldset': {
-                borderColor: '#3f51b5',
-            },
-            '&.Mui-focused fieldset': {
-                borderColor: 'green',
-            },
-            '& .MuiInputBase-input': {
-                color: '#7f7faf',
-                backgroundColor: 'white',
-            },
-        },
-    },
-})(TextField);
+import BookingForm from "../booking-form/BookingForm";
+import CustomStep from "../custom-step/CustomStep";
 
 class SimpleMap extends React.Component {
     constructor(props) {
@@ -93,11 +60,6 @@ class SimpleMap extends React.Component {
     handleBack = () => {
         this.setState({activeStep: this.state.activeStep - 1});
     };
-
-    handleReset = () => {
-        this.setState({activeStep: null});
-    };
-
 
     useStyles = () => makeStyles(theme => ({
         root: {
@@ -154,67 +116,18 @@ class SimpleMap extends React.Component {
                             </Button>
                         )}
                     </div>
-
                 </Popover>
-                <div className="step-wrapper">
-                    <Stepper activeStep={activeStep} alternativeLabel>
-                        {steps.map((label) => (
-                            <Step key={label}>
-                                <StepLabel>{label}</StepLabel>
-                            </Step>
-                        ))}
-                    </Stepper>
-                    <div>
-                        {activeStep === steps.length ? (
-                            <div>
-                                <Typography className="instructions">All steps completed</Typography>
-                                <Button onClick={this.handleReset}>Reset</Button>
-                            </div>
-                        ) : (
-                            <Button
-                                disabled={activeStep === 0}
-                                onClick={this.handleBack}
-                                variant="contained"
-                            > Back
-                            </Button>
-                        )}
-                    </div>
-                </div>
-                <div className={classes.root}>
-                    {activeStep >= 1 &&
-                    <CssTextField
-                        className={classes.margin}
-                        label="Hospital"
-                        value={bookingService.currentItem.hospital.name}
-                        variant="outlined"
-                    />
-                    }
-                    {activeStep >= 2 &&
-                    <div>
-                        <CssTextField
-                            className={classes.margin}
-                            label="Doctor"
-                            value={bookingService.currentItem.doctor.name}
-                            variant="outlined"
-                        />
-                        <CssTextField
-                            label="Date"
-                            type="date"
-                            defaultValue={bookingService.currentItem.date}
-                            className={classes.margin}
-                            InputLabelProps={{
-                                shrink: true,
-                            }}
-                        />
-                        <Button
-                            onClick={this.onSave}
-                            color="primary"
-                            variant="contained"
-                        > Save
-                        </Button>
-                    </div>
-                    }
-                </div>
+                <CustomStep
+                    activeStep={activeStep}
+                    steps={steps}
+                    handleBack={this.handleBack}
+                />
+                <BookingForm
+                    classes={classes}
+                    activeStep={activeStep}
+                    currentItem={bookingService.currentItem}
+                    onSaveForm={this.onSave}
+                />
             </section>
         )
     }
