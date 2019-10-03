@@ -1,4 +1,4 @@
-import {action, computed, decorate, observable, runInAction} from "mobx";
+import {action, computed, decorate, observable, runInAction, reaction, when} from "mobx";
 import {types} from "mobx-state-tree";
 
 export const BookingModel = types
@@ -11,7 +11,9 @@ export const BookingModel = types
 class BookingService {
     _item = [
         {
-            doctor: 'mock-doctor',
+            doctor: {
+                name: 'first',
+            },
             hospital: 'mock-location',
             date: 'mock-date',
         },
@@ -21,7 +23,14 @@ class BookingService {
         hospital: null,
         date: new Date().toJSON().slice(0, 10),
     };
-    response = 'init';
+    _isLoading;
+
+    constructor() {
+        when(
+            () => this._isLoading,
+            () => console.log('when')
+        );
+    }
 
     get items() {
         return this._item
@@ -29,6 +38,10 @@ class BookingService {
 
     get currentItem() {
         return this._currentItem
+    }
+
+    get isLoading() {
+        return this._isLoading
     }
 
     addItem(item) {
@@ -43,29 +56,39 @@ class BookingService {
         };
     }
 
-    async addCurrentItem() {
+    addCurrentItem() {
+        this._isLoading = true;
         this._item.push(this.currentItem);
         this._currentItem = {
             doctor: null,
             hospital: null,
             date: new Date().toJSON().slice(0, 10),
         };
+    }
 
-        const response = await new Promise((res, rej) => {
+    async fetch() {
+        await new Promise((res, rej) => {
             setTimeout(() => {
                 res('Success')
             }, 1000)
         });
         runInAction(() => {
-            this.response = response;
+            console.log("runInAction");
+            this._isLoading = false;
         })
     }
+
+    reaction2 = reaction(
+        (d) => this._item.map(item => item.doctor),
+        doctors => this.fetch()
+    );
+
 }
 
 decorate(BookingService, {
     _item: observable,
     _currentItem: observable,
-    response: observable,
+    _isLoading: observable,
     items: computed,
     currentItem: computed,
     addItem: action,

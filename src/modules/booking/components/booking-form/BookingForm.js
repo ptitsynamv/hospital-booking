@@ -41,7 +41,6 @@ class BookingForm extends React.Component {
 
     render() {
         const {classes, activeStep, currentItem} = this.props;
-
         return (
             <div className={classes.root}>
                 {activeStep >= 1 &&

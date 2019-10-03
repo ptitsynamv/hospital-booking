@@ -5,10 +5,12 @@ import HospitalService from "../../services/HospitalService";
 import DoctorService from "../../services/DoctorService";
 import {observer} from "mobx-react";
 import Button from "@material-ui/core/Button/Button";
-import BookingService from "../../services/BookingService";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import BookingForm from "../booking-form/BookingForm";
 import CustomStep from "../custom-step/CustomStep";
+import CircularProgress from "@material-ui/core/CircularProgress/CircularProgress";
+import LinearProgress from "@material-ui/core/LinearProgress/LinearProgress";
+import {PropTypes} from "mobx-react"
 
 class SimpleMap extends React.Component {
     constructor(props) {
@@ -16,7 +18,7 @@ class SimpleMap extends React.Component {
         this.state = {
             hospitalService: new HospitalService(),
             doctorService: new DoctorService(),
-            bookingService: new BookingService(),
+            bookingService: this.props.bookingService,
             anchorEl: null,
             activeStep: null,
             steps: [
@@ -82,63 +84,78 @@ class SimpleMap extends React.Component {
 
         return (
             <div>
-                {!hospitalService.isLoading &&
-                <section>
-                    <svg>
-                        {hospitalService.hospitals.map((hospital, i) =>
-                            <g key={i}>
-                                <circle
-                                    cx={hospital.cx}
-                                    cy={hospital.cy}
-                                    r="50" strokeWidth="1"
-                                    onClick={e => this.handleHospitalClick(e, hospital)}/>
-                                <text
-                                    x={hospital.textCx}
-                                    y={hospital.textCy}
-                                    className="name">
-                                    {hospital.name}
-                                </text>
-                            </g>
-                        )}
-                    </svg>
-                    <Popover
-                        id='simple-popover'
-                        open={isOpen}
-                        anchorEl={anchorEl}
-                        onClose={this.handleClose}
-                        anchorOrigin={{
-                            vertical: 'bottom',
-                            horizontal: 'center',
-                        }}
-                        transformOrigin={{
-                            vertical: 'top',
-                            horizontal: 'center',
-                        }}
-                    >
-                        <div className="doctors-wrap">
-                            {doctorService.filterDoctors.map((doctor, i) =>
-                                <Button key={i} color="primary" onClick={e => this.handleDoctorClick(e, doctor)}>
-                                    {doctor.name}
-                                </Button>
+                {hospitalService.isLoading
+                    ?
+                    <CircularProgress
+                        size={300}
+                        className={classes.progress}/>
+                    :
+                    <section>
+                        <svg>
+                            {hospitalService.hospitals.map((hospital, i) =>
+                                <g key={i}>
+                                    <circle
+                                        cx={hospital.cx}
+                                        cy={hospital.cy}
+                                        r="50" strokeWidth="1"
+                                        onClick={e => this.handleHospitalClick(e, hospital)}/>
+                                    <text
+                                        x={hospital.textCx}
+                                        y={hospital.textCy}
+                                        className="name">
+                                        {hospital.name}
+                                    </text>
+                                </g>
                             )}
-                        </div>
-                    </Popover>
-                    <CustomStep
-                        activeStep={activeStep}
-                        steps={steps}
-                        handleBack={this.handleBack}
-                    />
-                    <BookingForm
-                        classes={classes}
-                        activeStep={activeStep}
-                        currentItem={bookingService.currentItem}
-                        onSaveForm={this.onSave}
-                    />
-                    <h1>Response: {bookingService.response}</h1>
-                </section>}
+                        </svg>
+                        <Popover
+                            id='simple-popover'
+                            open={isOpen}
+                            anchorEl={anchorEl}
+                            onClose={this.handleClose}
+                            anchorOrigin={{
+                                vertical: 'bottom',
+                                horizontal: 'center',
+                            }}
+                            transformOrigin={{
+                                vertical: 'top',
+                                horizontal: 'center',
+                            }}
+                        >
+                            <div className="doctors-wrap">
+                                {doctorService.filterDoctors.map((doctor, i) =>
+                                    <Button key={i} color="primary" onClick={e => this.handleDoctorClick(e, doctor)}>
+                                        {doctor.name}
+                                    </Button>
+                                )}
+                            </div>
+                        </Popover>
+                        <CustomStep
+                            activeStep={activeStep}
+                            steps={steps}
+                            handleBack={this.handleBack}
+                        />
+                        <BookingForm
+                            classes={classes}
+                            activeStep={activeStep}
+                            currentItem={bookingService.currentItem}
+                            onSaveForm={this.onSave}
+                        />
+                        {bookingService.isLoading
+                            ?
+                            <LinearProgress/>
+                            :
+                            <h3>No loading</h3>
+                        }
+                    </section>
+                }
             </div>
         )
     }
 }
+
+SimpleMap.propTypes = {
+    bookingService: PropTypes.observableObject,
+};
 
 export default observer(SimpleMap);

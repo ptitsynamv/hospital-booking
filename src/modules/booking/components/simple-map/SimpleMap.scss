@@ -3,6 +3,7 @@ section {
   border: 1px solid;
   border-top: unset;
   width: 100%;
+
   svg {
     height: inherit;
     width: inherit;
@@ -18,7 +19,8 @@ section {
       stroke: #ffffff;
     }
   }
-  .step-wrapper{
+
+  .step-wrapper {
     margin-bottom: 20px;
   }
 }
